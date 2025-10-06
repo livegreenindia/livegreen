@@ -1,0 +1,70 @@
+# Flutter / Dart
+.dart_tool/
+.buildlog/
+.packages
+.pub/
+build/
+ios/Flutter/Flutter.framework/
+ios/Flutter/Flutter.podspec
+android/.gradle/
+android/app/build/
+android/local.properties
+
+# Misc
+*.apk
+*.aab
+*.so
+*.log
+*.lock
+
+# Build outputs
+build/
+android/app/build/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/ServiceDefinitions.json
+ios/Runner/GeneratedPluginRegistrant.*
+
+# Generated plugin files
+**/GeneratedPluginRegistrant.*
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Xcode specific
+ios/Pods/
+ios/Podfile.lock
+ios/.symlinks/
+ios/Flutter/ephemeral/
+
+# IntelliJ / Android Studio
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# Android specific
+.gradle/
+**/local.properties
+**/key.properties
+
+# MacOS
+.DS_Store
+
+# Environment files
+*.env
+
+# Web build
+web/.dart_tool/
+web/build/
+
+# Linux / Windows build
+linux/build/
+windows/build/
+
+# Coverage
+coverage/
+
+# Firebase / secrets (if applicable)
+google-services.json
+GoogleService-Info.plist
