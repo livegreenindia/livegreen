@@ -13,11 +13,17 @@ class ActivityPage extends StatefulWidget {
 class _ActivityPageState extends State<ActivityPage> {
   int _happiness = 5;
   final Color primaryColor = const Color.fromARGB(255, 30, 149, 78);
+  final Color successColor = const Color(0xFF00C853);
   final Color backgroundLight = const Color(0xFFf6f8f7);
   final Color backgroundDark = const Color(0xFF122017);
 
+  final Map<String, bool> _completedActivities = {};
+
   Widget activityCard(String title, String subtitle, IconData icon) {
-    return Container(
+    bool isCompleted = _completedActivities[title] ?? false;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.symmetric(vertical: 4),
       decoration: BoxDecoration(
@@ -26,10 +32,21 @@ class _ActivityPageState extends State<ActivityPage> {
             : backgroundLight,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: Theme.of(context).brightness == Brightness.dark
+          color: isCompleted
+              ? successColor.withOpacity(0.4)
+              : Theme.of(context).brightness == Brightness.dark
               ? Colors.white.withOpacity(0.05)
               : Colors.black.withOpacity(0.05),
         ),
+        boxShadow: isCompleted
+            ? [
+                BoxShadow(
+                  color: successColor.withOpacity(0.2),
+                  blurRadius: 10,
+                  spreadRadius: 2,
+                ),
+              ]
+            : [],
       ),
       child: Row(
         children: [
@@ -37,10 +54,16 @@ class _ActivityPageState extends State<ActivityPage> {
             height: 48,
             width: 48,
             decoration: BoxDecoration(
-              color: primaryColor.withOpacity(0.2),
+              color: isCompleted
+                  ? successColor.withOpacity(0.2)
+                  : primaryColor.withOpacity(0.2),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: primaryColor, size: 28),
+            child: Icon(
+              icon,
+              color: isCompleted ? successColor : primaryColor,
+              size: 28,
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -52,6 +75,7 @@ class _ActivityPageState extends State<ActivityPage> {
                   style: GoogleFonts.manrope(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
+                    color: isCompleted ? successColor : null,
                   ),
                 ),
                 Text(
@@ -67,46 +91,69 @@ class _ActivityPageState extends State<ActivityPage> {
             ),
           ),
           ElevatedButton(
-            onPressed: () {
-              // 👇 Show congratulation popup
-              showDialog(
-                context: context,
-                builder: (ctx) => AlertDialog(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  title: Text(
-                    "🎉 Activity Completed!",
-                    style: GoogleFonts.manrope(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
-                  ),
-                  content: Text(
-                    "Great job! You’ve completed \"$title\". Keep up the good work!",
-                    style: GoogleFonts.manrope(fontSize: 14),
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(ctx),
-                      child: Text("OK", style: TextStyle(color: primaryColor)),
-                    ),
-                  ],
-                ),
-              );
-            },
+            onPressed: isCompleted
+                ? null
+                : () {
+                    // ✅ Mark as complete
+                    setState(() {
+                      _completedActivities[title] = true;
+                    });
+
+                    // 🎉 Show congratulation popup
+                    showDialog(
+                      context: context,
+                      builder: (ctx) => AlertDialog(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        title: Row(
+                          children: [
+                            const Icon(
+                              Icons.celebration,
+                              color: Colors.orange,
+                              size: 28,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              "Great Job!",
+                              style: GoogleFonts.manrope(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ],
+                        ),
+                        content: Text(
+                          "🎉 You’ve completed \"$title\". Keep up your progress — every small step counts!",
+                          style: GoogleFonts.manrope(fontSize: 14),
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(ctx),
+                            child: Text(
+                              "Keep Going",
+                              style: TextStyle(color: primaryColor),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
             style: ElevatedButton.styleFrom(
-              backgroundColor: primaryColor,
+              backgroundColor: isCompleted
+                  ? successColor
+                  : primaryColor, // ✅ Color change
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             ),
             child: Text(
-              "Complete",
+              isCompleted ? "Completed ✅" : "Complete",
               style: GoogleFonts.manrope(
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
+                color: Colors.white,
               ),
             ),
           ),
@@ -203,8 +250,6 @@ class _ActivityPageState extends State<ActivityPage> {
                             ],
                           ),
                           const SizedBox(height: 12),
-
-                          // ✅ Save Mood Button
                           SizedBox(
                             width: double.infinity,
                             height: 48,
